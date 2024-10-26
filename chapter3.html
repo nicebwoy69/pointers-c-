@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3: Arrays and Dynamic Memory in Audio Programming</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; }
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+        .section { margin-bottom: 20px; }
+        .example { background-color: #f9f9f9; padding: 10px; border-left: 4px solid #3498db; margin: 10px 0; }
+        .tip { background-color: #e7f4e4; padding: 10px; border-left: 4px solid #2ecc71; margin: 10px 0; }
+        .diagram { background-color: #f4f4f9; padding: 10px; border-left: 4px solid #ffa726; margin: 10px 0; text-align: center; }
+    </style>
+</head>
+<body>
+
+<h1>Chapter 3: Arrays and Dynamic Memory in Audio Programming</h1>
+
+<p>Arrays are essential in audio programming, providing an efficient way to manage collections of audio samples in contiguous memory blocks. This chapter covers both static and dynamic arrays, with a focus on handling audio buffers. You’ll learn when and how to resize arrays dynamically, as well as how to avoid memory leaks.</p>
+
+<h2>1. Static Arrays</h2>
+<p>Static arrays have a fixed size defined at compile-time and are stored on the stack. These are ideal for small, predictable data structures where memory usage is predictable, such as small audio buffers for temporary effects.</p>
+
+<div class="example">
+<pre><code>// Example: Static Array for a Fixed Audio Buffer
+void processStaticBuffer() {
+    float audioBuffer[1024]; // Fixed-size array for audio samples
+    for (int i = 0; i < 1024; ++i) {
+        audioBuffer[i] = i * 0.001f; // Fill with values
+    }
+    // Process audioBuffer (e.g., apply gain)
+}</code></pre>
+</div>
+
+<h3>Limitations of Static Arrays</h3>
+<p>Static arrays cannot be resized once created, which limits their use in applications requiring variable or large buffer sizes. In real-time audio processing, buffer sizes may need to change based on the environment or sample rate, making dynamic memory allocation a more suitable choice.</p>
+
+<h2>2. Dynamic Arrays</h2>
+<p>Dynamic arrays are allocated on the heap, allowing size determination at runtime. This is essential for audio programming, where buffer sizes may change based on user input or application needs. In C++, dynamic arrays are typically created with pointers using <code>new</code>, and memory is released with <code>delete[]</code> to prevent memory leaks.</p>
+
+<div class="example">
+<pre><code>// Example: Dynamic Array for Audio Buffer with Variable Size
+void processDynamicBuffer(int bufferSize) {
+    float* audioBuffer = new float[bufferSize]; // Allocate buffer on the heap
+    for (int i = 0; i < bufferSize; ++i) {
+        audioBuffer[i] = i * 0.001f; // Fill with values
+    }
+    // Process audioBuffer
+    delete[] audioBuffer; // Free memory to prevent leaks
+}</code></pre>
+</div>
+
+<h3>Advantages of Dynamic Arrays</h3>
+<ul>
+    <li><strong>Flexible Size:</strong> Allows buffer size adjustment to accommodate different sample rates and applications.</li>
+    <li><strong>Efficient Memory Usage:</strong> You can allocate memory based on current needs, avoiding unnecessary usage.</li>
+</ul>
+
+<h2>3. Resizing Dynamic Arrays</h2>
+<p>In C++, arrays cannot be resized directly. To resize a dynamic array, we allocate a new array, copy data from the old array, and then release the old memory.</p>
+
+<h3>Example: Resizing a Dynamic Array</h3>
+<p>This function resizes an existing array, which is useful for dynamically increasing buffer sizes during recording or audio processing.</p>
+
+<div class="example">
+<pre><code>float* resizeArray(float* oldArray, int oldSize, int newSize) {
+    float* newArray = new float[newSize];
+    int minSize = (oldSize < newSize) ? oldSize : newSize;
+    for (int i = 0; i < minSize; ++i) {
+        newArray[i] = oldArray[i]; // Copy data to the new array
+    }
+    delete[] oldArray; // Free old array memory
+    return newArray;
+}</code></pre>
+</div>
+
+<h2>4. Dynamic Arrays with <code>std::vector</code></h2>
+<p><code>std::vector</code> provides automatic resizing and memory management, simplifying code and reducing the risk of memory leaks. It’s part of the Standard Template Library (STL) and is well-suited for dynamic buffer handling in audio programming.</p>
+
+<div class="example">
+<pre><code>#include &lt;vector&gt;
+
+void processVectorBuffer() {
+    std::vector<float> audioBuffer(1024); // Vector with initial size
+    for (int i = 0; i < audioBuffer.size(); ++i) {
+        audioBuffer[i] = i * 0.001f; // Fill buffer
+    }
+    // Add more samples
+    audioBuffer.push_back(0.5f); // Vector resizes automatically
+}</code></pre>
+</div>
+
+<h3>Comparison: Dynamic Arrays vs. <code>std::vector</code></h3>
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>Dynamic Array</th>
+        <th><code>std::vector</code></th>
+    </tr>
+    <tr>
+        <td>Size Flexibility</td>
+        <td>Manual resizing</td>
+        <td>Automatic resizing</td>
+    </tr>
+    <tr>
+        <td>Memory Management</td>
+        <td>Manual (requires delete[])</td>
+        <td>Automatic, handled by the library</td>
+    </tr>
+    <tr>
+        <td>Performance</td>
+        <td>Fast, minimal overhead</td>
+        <td>Slower, additional resizing overhead</td>
+    </tr>
+    <tr>
+        <td>Ease of Use</td>
+        <td>Complex, requires careful handling</td>
+        <td>Easier, safer with built-in methods</td>
+    </tr>
+</table>
+
+<h2>5. Practical Example: Dynamic Buffer for Audio Input</h2>
+<p>In audio applications, you may need to dynamically resize buffers to match incoming data rates. Below are examples using both dynamic arrays and <code>std::vector</code>.</p>
+
+<div class="example">
+<pre><code>#include &lt;vector&gt;
+#include &lt;iostream&gt;
+
+void recordAudioDynamic(int initialSize) {
+    float* audioBuffer = new float[initialSize]; // Dynamic array
+    int currentSize = initialSize;
+    // Simulate buffer expansion
+    for (int i = 0; i < 5; ++i) {
+        audioBuffer = resizeArray(audioBuffer, currentSize, currentSize + 512);
+        currentSize += 512;
+    }
+    delete[] audioBuffer; // Clean up memory
+}
+
+void recordAudioVector(int initialSize) {
+    std::vector<float> audioBuffer(initialSize); // Vector
+    for (int i = 0; i < 5; ++i) {
+        audioBuffer.resize(audioBuffer.size() + 512); // Automatic resizing
+    }
+}</code></pre>
+</div>
+
+<h2>6. Exercise: Creating and Resizing Buffers</h2>
+<ol>
+    <li><strong>Objective:</strong> Write a function using a dynamic array, resize it to store audio data as needed.</li>
+    <li><strong>Hints:</strong>
+        <ul>
+            <li>Use <code>new</code> and <code>delete[]</code> for dynamic arrays.</li>
+            <li>Create a helper function to resize the array by allocating a new size and copying data over.</li>
+        </ul>
+    </li>
+</ol>
+
+<div class="example">
+<pre><code>void processAndResizeBuffer() {
+    int bufferSize = 1024;
+    float* buffer = new float[bufferSize];
+
+    for (int i = 0; i < bufferSize; ++i) {
+        buffer[i] = i * 0.001f; // Fill buffer
+    }
+
+    // Resize buffer
+    buffer = resizeArray(buffer, bufferSize, bufferSize + 512);
+
+    delete[] buffer;
+}</code></pre>
+</div>
+
+<h2>7. Common Mistakes in Dynamic Memory Management</h2>
+<ul>
+    <li><strong>Memory Leaks:</strong> Every <code>new</code> allocation should have a corresponding <code>delete[]</code> to prevent memory leaks.</li>
+    <li><strong>Uninitialized Elements:</strong> When resizing arrays, initialize any new elements to avoid unexpected behavior.</li>
+</ul>
+
+<p>With these concepts in place, you're prepared to manage audio data with static and dynamic arrays effectively. In the next chapter, we'll delve into pointers and audio buffers to further optimize audio processing in C++.</p>
+
+</body>
+</html>

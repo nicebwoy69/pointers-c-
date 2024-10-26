@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Programming Cheat Sheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .code {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Audio Programming Cheat Sheet</h1>
+
+    <div class="section">
+        <h2>Memory Management Essentials</h2>
+        <h3>Stack vs. Heap</h3>
+        <ul>
+            <li><strong>Stack:</strong> Automatic memory management, limited size, and fast access. Ideal for small, fixed-size buffers.</li>
+            <li><strong>Heap:</strong> Manually allocated and deallocated, flexible size, slower access. Suitable for large, variable buffers.</li>
+        </ul>
+        <h3>Allocation/Deallocation Examples</h3>
+        <pre><code class="code">// Allocate on heap
+int* heapArray = new int[size];
+
+// Free memory
+delete[] heapArray;
+        </code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Pointers and References</h2>
+        <h3>Pointer Basics</h3>
+        <p>Pointers store the memory address of variables and enable efficient data manipulation.</p>
+        <pre><code class="code">// Declaring and using a pointer
+int var = 10;
+int* ptr = &var; // Pointer to var
+*ptr = 20;       // Modify var through ptr
+        </code></pre>
+
+        <h3>Function Pointers</h3>
+        <p>Function pointers enable dynamic selection of functions, useful for applying different effects in audio processing.</p>
+        <pre><code class="code">// Declaring a function pointer
+float applyGain(float sample) {
+    return sample * 0.8f;
+}
+
+float (*effectFunc)(float) = applyGain; // Assign function
+float processedSample = effectFunc(1.0f); // Call through pointer
+        </code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Dynamic Arrays and std::vector</h2>
+        <h3>Dynamic Array Basics</h3>
+        <pre><code class="code">// Creating a dynamic array
+int bufferSize = 1024;
+float* buffer = new float[bufferSize];
+
+// Free memory after use
+delete[] buffer;
+        </code></pre>
+
+        <h3>Using std::vector</h3>
+        <p>Vectors automatically resize, making them ideal for dynamic buffers.</p>
+        <pre><code class="code">// Using std::vector for dynamic arrays
+#include &lt;vector&gt;
+std::vector&lt;float&gt; buffer(size);
+buffer.push_back(value); // Adds value, resizes if needed
+        </code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Common Pitfalls and Tips</h2>
+        <ul>
+            <li><strong>Avoid Memory Leaks:</strong> Ensure every <code>new</code> allocation has a corresponding <code>delete</code>.</li>
+            <li><strong>Pointer Safety:</strong> Initialize pointers to avoid undefined behavior when dereferenced.</li>
+            <li><strong>Buffer Size Management:</strong> Avoid excessive stack allocations in real-time processing functions.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Real-Time Audio Processing Tips</h2>
+        <ul>
+            <li><strong>Optimize Buffers:</strong> Use in-place processing to save memory and reduce latency.</li>
+            <li><strong>Use <code>const</code> Pointers:</strong> Use <code>const</code> pointers for read-only buffers to avoid accidental modifications.</li>
+            <li><strong>Initialize Heap Buffers Before Processing:</strong> Allocate memory on the heap only during initialization to prevent delays in real-time processing.</li>
+        </ul>
+        <h3>In-Place Processing Example</h3>
+        <pre><code class="code">// Applying gain in place
+void applyGainInPlace(float* buffer, int size, float gain) {
+    for (int i = 0; i < size; i++) {
+        buffer[i] *= gain; // Modify buffer directly
+    }
+}
+        </code></pre>
+    </div>
+
+</body>
+</html>

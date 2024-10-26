@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 2: Memory Management - Stack vs. Heap</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; }
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+        .section { margin-bottom: 20px; }
+        .example, .exercise { background-color: #f9f9f9; padding: 10px; border-left: 4px solid #3498db; margin: 10px 0; }
+        .tip { background-color: #e7f4e4; padding: 10px; border-left: 4px solid #2ecc71; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<h1>Chapter 2: Memory Management - Stack vs. Heap</h1>
+
+<div class="section">
+    <h2>Overview of Memory Management in Audio Programming</h2>
+    <p>Memory management is fundamental in C++ for handling audio data effectively. In C++, there are two primary areas for allocating memory: the <strong>Stack</strong> and the <strong>Heap</strong>. Each serves a unique purpose, and understanding the differences is crucial, especially in audio applications where performance and memory efficiency are important.</p>
+</div>
+
+<div class="section">
+    <h2>Stack Memory</h2>
+    <p>The stack is a region of memory where data is stored temporarily. Stack allocation is automatic and happens when variables are declared within a function. When the function ends, the memory is automatically released.</p>
+    <h3>Characteristics of Stack Memory</h3>
+    <ul>
+        <li><strong>Fast Allocation and Deallocation:</strong> Memory is allocated and freed automatically, making stack allocation faster.</li>
+        <li><strong>Limited Size:</strong> Stack size is limited, usually a few megabytes.</li>
+        <li><strong>Scope-Limited:</strong> Data on the stack only exists within the function's scope and is destroyed when the function ends.</li>
+    </ul>
+
+    <h3>When to Use Stack Memory in Audio Programming</h3>
+    <p>Stack memory is ideal for temporary buffers and small, fixed-size data. For instance, if you’re processing a short audio effect in a function and don’t need the buffer afterward, stack allocation works well.</p>
+    <div class="example">
+        <pre><code>void processAudioStack() {
+    float tempBuffer[1024]; // Allocates a temporary audio buffer on the stack
+    // Perform operations on tempBuffer
+} // tempBuffer is automatically deallocated here</code></pre>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Heap Memory</h2>
+    <p>The heap is a region of memory used for dynamic memory allocation. Unlike the stack, memory on the heap must be manually allocated and freed.</p>
+    <h3>Characteristics of Heap Memory</h3>
+    <ul>
+        <li><strong>Flexible Size:</strong> The heap allows for large, variable-size allocations, making it suitable for audio buffers.</li>
+        <li><strong>Manual Control:</strong> Memory on the heap persists until explicitly freed by the programmer.</li>
+        <li><strong>Slower Access:</strong> Heap allocation and deallocation are slower than stack operations.</li>
+    </ul>
+
+    <h3>When to Use Heap Memory in Audio Programming</h3>
+    <p>Heap memory is suitable when working with large buffers, variable buffer sizes, or persistent data that needs to exist beyond a single function call.</p>
+    <div class="example">
+        <pre><code>void processAudioHeap() {
+    int bufferSize = 2048;
+    float* dynamicBuffer = new float[bufferSize]; // Allocates memory on the heap
+    // Perform operations on dynamicBuffer
+    delete[] dynamicBuffer; // Free the memory to prevent memory leaks
+}</code></pre>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Stack vs. Heap: Key Differences</h2>
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Stack</th>
+            <th>Heap</th>
+        </tr>
+        <tr>
+            <td>Size</td>
+            <td>Limited</td>
+            <td>Flexible</td>
+        </tr>
+        <tr>
+            <td>Lifetime</td>
+            <td>Automatic (based on scope)</td>
+            <td>Manual</td>
+        </tr>
+        <tr>
+            <td>Speed</td>
+            <td>Faster</td>
+            <td>Slower</td>
+        </tr>
+        <tr>
+            <td>Use Case</td>
+            <td>Temporary, fixed-size data</td>
+            <td>Large, variable-size data</td>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Practical Example: Stack vs. Heap in Audio Processing</h2>
+    <p>To illustrate the difference, let's say we want to apply a simple effect, like gain adjustment, to an audio buffer.</p>
+
+    <h3>1. Using Stack Memory</h3>
+    <p>Suitable for short, in-scope audio processing where the buffer size is known and fixed. Limited by stack size; allocating large arrays on the stack can cause stack overflow.</p>
+    <div class="example">
+        <pre><code>void applyGainStack(float gain) {
+    float buffer[1024]; // Fixed-size buffer on the stack
+    for (int i = 0; i < 1024; ++i) {
+        buffer[i] = buffer[i] * gain; // Apply gain
+    }
+} // buffer is deallocated when function ends</code></pre>
+    </div>
+
+    <h3>2. Using Heap Memory</h3>
+    <p>Useful for handling larger or variable-size buffers, which can be set based on input. The memory must be manually released to avoid memory leaks.</p>
+    <div class="example">
+        <pre><code>void applyGainHeap(float gain, int bufferSize) {
+    float* buffer = new float[bufferSize]; // Dynamic buffer on the heap
+    for (int i = 0; i < bufferSize; ++i) {
+        buffer[i] = buffer[i] * gain; // Apply gain
+    }
+    delete[] buffer; // Deallocate memory to prevent leaks
+}</code></pre>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Exercise: Using Stack and Heap Buffers</h2>
+    <h3>Objective:</h3>
+    <p>Create functions to process an audio buffer using both stack and heap memory.</p>
+    <h3>Details:</h3>
+    <ul>
+        <li><strong>Stack Function:</strong> Declare a fixed-size buffer on the stack, fill it with values, and apply gain.</li>
+        <li><strong>Heap Function:</strong> Dynamically allocate a buffer on the heap, process it, and ensure proper deallocation.</li>
+    </ul>
+
+    <h3>Stack Version:</h3>
+    <div class="exercise">
+        <pre><code>void processStackBuffer() {
+    float buffer[1024];
+    for (int i = 0; i < 1024; ++i) {
+        buffer[i] = static_cast<float>(i) / 1024; // Fill with values
+    }
+    // Process buffer, e.g., apply gain
+}</code></pre>
+    </div>
+
+    <h3>Heap Version:</h3>
+    <div class="exercise">
+        <pre><code>void processHeapBuffer(int bufferSize) {
+    float* buffer = new float[bufferSize];
+    for (int i = 0; i < bufferSize; ++i) {
+        buffer[i] = static_cast<float>(i) / bufferSize; // Fill with values
+    }
+    // Process buffer, e.g., apply gain
+    delete[] buffer; // Clean up
+}</code></pre>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Common Mistakes and Memory Leaks</h2>
+    <ul>
+        <li><strong>Forgetting to Free Heap Memory:</strong> If you allocate memory on the heap using <code>new</code> or <code>new[]</code>, always remember to free it with <code>delete</code> or <code>delete[]</code> to prevent memory leaks.</li>
+    </ul>
+    <div class="example">
+        <pre><code>float* buffer = new float[1024];
+// ... Use buffer
+delete[] buffer; // Correctly freeing the buffer</code></pre>
+    </div>
+
+    <ul>
+        <li><strong>Accessing Out-of-Scope Variables:</strong> Data on the stack is automatically freed when a function ends. Accessing it afterward can cause undefined behavior.</li>
+    </ul>
+    <div class="example">
+        <pre><code>float* buffer;
+{
+    float temp[1024];
+    buffer = temp; // buffer points to temp
+} // temp goes out of scope, so buffer now points to invalid memory</code></pre>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Summary</h2>
+    <ul>
+        <li><strong>Stack Memory</strong> is fast and automatically managed, suitable for small, temporary data within a function.</li>
+        <li><strong>Heap Memory</strong> offers flexibility in size and lifespan, ideal for large buffers that must persist beyond a function's scope.</li>
+        <li><strong>Memory Management:</strong> Properly manage memory, especially on the heap, to avoid memory leaks and dangling pointers.</li>
+    </ul>
+</div>
+
+<p>This chapter introduces stack and heap memory, showing their applications in audio processing. The next chapter will focus on Dynamic Arrays and Resizing to cover how to handle buffer resizing in audio applications.</p>
+
+</body>
+</html>

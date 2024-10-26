@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expanded Audio Programming Cheat Sheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .code {
+            color: #e74c3c;
+        }
+        img {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Expanded Audio Programming Cheat Sheet</h1>
+
+    <!-- Memory Management Essentials -->
+    <div class="section">
+        <h2>Memory Management Essentials</h2>
+        <h3>Stack vs. Heap</h3>
+        <ul>
+            <li><strong>Stack:</strong> Automatic, fast access, suitable for small buffers. Limited size and scope-based deallocation.</li>
+            <li><strong>Heap:</strong> Manually allocated, slower access, flexible for larger buffers. Must free memory after use.</li>
+        </ul>
+        <h3>Allocation/Deallocation Examples</h3>
+        <pre><code class="code">// Allocate on heap
+int* heapArray = new int[size];
+// Free memory
+delete[] heapArray;
+        </code></pre>
+        <img src="stack_vs_heap_memory_placeholder.png" alt="Stack vs Heap Memory Diagram">
+    </div>
+
+    <!-- Pointers and References -->
+    <div class="section">
+        <h2>Pointers and References</h2>
+        <h3>Pointer Basics</h3>
+        <p>Pointers store the memory address of variables and allow direct data manipulation.</p>
+        <pre><code class="code">// Declaring and using a pointer
+int var = 10;
+int* ptr = &var; // Pointer to var
+*ptr = 20;       // Modify var through ptr
+        </code></pre>
+
+        <h3>Function Pointers</h3>
+        <p>Enable dynamic selection of functions, useful for applying different audio effects.</p>
+        <pre><code class="code">// Declaring a function pointer
+float applyGain(float sample) {
+    return sample * 0.8f;
+}
+float (*effectFunc)(float) = applyGain; // Assign function
+float processedSample = effectFunc(1.0f); // Call through pointer
+        </code></pre>
+    </div>
+
+    <!-- Dynamic Arrays and std::vector -->
+    <div class="section">
+        <h2>Dynamic Arrays and std::vector</h2>
+        <h3>Dynamic Array Basics</h3>
+        <pre><code class="code">// Creating a dynamic array
+int bufferSize = 1024;
+float* buffer = new float[bufferSize];
+// Free memory after use
+delete[] buffer;
+        </code></pre>
+        <h3>Using std::vector</h3>
+        <p>Vectors automatically resize, making them ideal for dynamic buffers.</p>
+        <pre><code class="code">// Using std::vector for dynamic arrays
+#include &lt;vector&gt;
+std::vector&lt;float&gt; buffer(size);
+buffer.push_back(value); // Adds value, resizes if needed
+        </code></pre>
+    </div>
+
+    <!-- Real-World Examples -->
+    <div class="section">
+        <h2>Real-World Examples</h2>
+        <h3>Applying Gain to an Audio Buffer</h3>
+        <p>Using pointers to traverse and modify an audio buffer.</p>
+        <pre><code class="code">void applyGain(float* buffer, int size, float gain) {
+    for (int i = 0; i < size; i++) {
+        buffer[i] *= gain;
+    }
+}
+        </code></pre>
+        <img src="applying_gain_to_audio_buffer_placeholder.png" alt="Applying Gain to Audio Buffer Diagram">
+    </div>
+
+    <!-- Best Practices and Common Pitfalls -->
+    <div class="section">
+        <h2>Best Practices and Common Pitfalls</h2>
+        <ul>
+            <li><strong>Memory Management:</strong> Always match <code>new</code> with <code>delete</code> to avoid memory leaks.</li>
+            <li><strong>Pointer Safety:</strong> Initialize pointers to avoid undefined behavior when dereferenced.</li>
+            <li><strong>In-Place Processing:</strong> Optimize by modifying data directly in the buffer to reduce memory usage.</li>
+        </ul>
+    </div>
+
+    <!-- Advanced Topics -->
+    <div class="section">
+        <h2>Advanced Topics</h2>
+        <h3>SIMD Optimization</h3>
+        <p>SIMD (Single Instruction, Multiple Data) allows parallel processing of data, increasing performance in audio processing.</p>
+        <img src="simd_optimization_placeholder.png" alt="SIMD Optimization Diagram">
+
+        <h3>Multithreading</h3>
+        <p>Improves performance by distributing tasks across multiple threads, essential for real-time audio applications.</p>
+    </div>
+
+    <!-- Error Handling -->
+    <div class="section">
+        <h2>Error Handling</h2>
+        <ul>
+            <li><strong>Null Pointers:</strong> Check for null pointers before dereferencing to prevent crashes.</li>
+            <li><strong>Allocation Failure:</strong> Verify dynamic allocations to handle memory allocation failures.</li>
+            <li><strong>Exception Safety:</strong> Use try-catch blocks if exceptions are enabled to manage errors effectively.</li>
+        </ul>
+    </div>
+
+    <!-- Additional Resources -->
+    <div class="section">
+        <h2>Additional Resources</h2>
+        <ul>
+            <li><a href="https://learncpp.com">Learn C++ Programming</a></li>
+            <li><a href="https://stackoverflow.com">Stack Overflow - Programming Community</a></li>
+            <li><a href="https://www.audioprogramming.com">Audio Programming Forum</a></li>
+        </ul>
+    </div>
+
+</body>
+</html>

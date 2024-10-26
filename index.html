@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Programming Guide</title>
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var iframeContainer = document.getElementById('iframe-container');
+
+            if (sidebar.style.display === 'block' || sidebar.style.display === '') {
+                sidebar.style.display = 'none';
+                iframeContainer.style.marginLeft = '0';
+            } else {
+                sidebar.style.display = 'block';
+                iframeContainer.style.marginLeft = '250px';
+            }
+        }
+
+        window.onresize = function() {
+            adjustLayout();
+        };
+
+        function adjustLayout() {
+            var width = window.innerWidth;
+            var sidebar = document.getElementById('sidebar');
+            var iframeContainer = document.getElementById('iframe-container');
+
+            if (width < 768) {
+                sidebar.style.display = 'none';
+                iframeContainer.style.marginLeft = '0';
+            } else {
+                sidebar.style.display = 'block';
+                iframeContainer.style.marginLeft = '250px';
+            }
+        }
+
+        function setActiveLink(link) {
+            var links = document.querySelectorAll('.sidebar a');
+            links.forEach(function(link) {
+                link.classList.remove('active');
+            });
+            link.classList.add('active');
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #F0F8FF;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #E6F7FF;
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            font-size: 18px;
+            color: #000;
+            display: block;
+            padding: 10px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #B3E5FC;
+            font-weight: bold;
+        }
+
+        .iframe-container {
+            flex-grow: 1;
+            margin-left: 250px;
+            padding: 20px;
+            background-color: #FFFFFF;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .toggle-btn {
+            display: block;
+            background-color: #E6F7FF;
+            color: black;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 1px solid #ccc;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        @media (min-width: 1024px) {
+            .iframe-container {
+                margin-left: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+                position: fixed;
+                width: 250px;
+            }
+
+            .iframe-container {
+                margin-left: 0;
+                padding-top: 50px;
+            }
+        }
+    </style>
+</head>
+<body onload="adjustLayout()">
+
+<div class="sidebar" id="sidebar">
+    <h2>Audio Programming Guide</h2>
+    <a href="./chapter1.html" target="content-frame" onclick="setActiveLink(this)">Chapter 1: Introduction to Arrays</a>
+    <a href="./chapter2.html" target="content-frame" onclick="setActiveLink(this)">Chapter 2: Memory Management</a>
+    <a href="./chapter3.html" target="content-frame" onclick="setActiveLink(this)">Chapter 3: Arrays and Dynamic Memory</a>
+    <a href="./chapter4.html" target="content-frame" onclick="setActiveLink(this)">Chapter 4: Pointers and Audio Buffers</a>
+    <a href="./chapter5.html" target="content-frame" onclick="setActiveLink(this)">Chapter 5: Function Pointers and Processing Pipelines</a>
+    <a href="./chapter6.html" target="content-frame" onclick="setActiveLink(this)">Chapter 6: Memory Management & Optimization</a>
+    <a href="./cheatsheet.html" target="content-frame" onclick="setActiveLink(this)">Audio Programming Cheatsheet</a>
+</div>
+
+<div class="toggle-btn" onclick="toggleSidebar()">☰ Toggle Navigation</div>
+
+<div class="iframe-container" id="iframe-container">
+    <iframe name="content-frame" src="./chapter1.html"></iframe>
+</div>
+
+</body>
+</html>

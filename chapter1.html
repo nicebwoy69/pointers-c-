@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1: Introduction to Arrays in Audio Programming</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; }
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+        .section { margin-bottom: 20px; }
+        .example { background-color: #f9f9f9; padding: 10px; border-left: 4px solid #3498db; margin: 10px 0; }
+        .tip { background-color: #e7f4e4; padding: 10px; border-left: 4px solid #2ecc71; margin: 10px 0; }
+        .diagram { background-color: #f4f4f9; padding: 10px; border-left: 4px solid #ffa726; margin: 10px 0; text-align: center; }
+    </style>
+</head>
+<body>
+
+<h1>Chapter 1: Introduction to Arrays in Audio Programming</h1>
+
+<p>Arrays are contiguous blocks of memory that store multiple elements of the same type. In audio programming, arrays are essential for handling buffers that hold audio samples, allowing efficient processing of audio data in real time.</p>
+
+<h2>Types of Arrays in Audio Programming</h2>
+
+<ul>
+    <li><strong>Static Arrays:</strong> Fixed in size and allocated on the stack, suitable for small or known, unchanging sizes, such as temporary audio effects.</li>
+    <li><strong>Dynamic Arrays:</strong> Allocated on the heap, allowing flexible sizing, and are useful for handling variable-length audio data, such as buffers that resize based on user input.</li>
+</ul>
+
+<h2>Declaring Static Arrays</h2>
+<p>Static arrays have a fixed size, which must be known at compile-time.</p>
+
+<div class="example">
+<pre><code>// Example: Declaring a static array for a fixed audio buffer
+float audioBuffer[1024]; // Creates an array with 1024 float elements
+</code></pre>
+</div>
+
+<h3>Usage Example: Processing a Static Audio Buffer</h3>
+<p>For instance, to apply a gain (volume adjustment) to each sample in a static audio buffer:</p>
+
+<div class="example">
+<pre><code>void applyGainStatic(float audioBuffer[1024], float gain) {
+    for (int i = 0; i < 1024; ++i) {
+        audioBuffer[i] *= gain; // Multiply each sample by the gain
+    }
+}</code></pre>
+</div>
+<p>This approach is efficient for small arrays but lacks flexibility, as the buffer size is hardcoded.</p>
+
+<h2>Declaring Dynamic Arrays</h2>
+<p>Dynamic arrays provide flexibility and are often used in real-time audio applications where the buffer size is variable or unknown at compile time.</p>
+
+<div class="example">
+<pre><code>// Example: Declaring a dynamic array for an adjustable audio buffer
+int bufferSize = 2048;
+float* audioBuffer = new float[bufferSize]; // Allocates memory on the heap
+
+// After using the array, remember to release the allocated memory
+delete[] audioBuffer; // Prevents memory leaks
+</code></pre>
+</div>
+
+<h3>Usage Example: Processing a Dynamic Audio Buffer</h3>
+<p>Here’s how to apply gain to a dynamic buffer, where the buffer size may change:</p>
+
+<div class="example">
+<pre><code>void applyGainDynamic(float* audioBuffer, int bufferSize, float gain) {
+    for (int i = 0; i < bufferSize; ++i) {
+        audioBuffer[i] *= gain;
+    }
+}</code></pre>
+</div>
+<p>Dynamic arrays are essential for applications where the audio buffer size may vary based on program or user needs.</p>
+
+<div class="diagram">
+    <h4>Diagram: Static vs. Dynamic Arrays in Memory</h4>
+    <p><em>(Illustrate stack allocation for static arrays and heap allocation for dynamic arrays.)</em></p>
+</div>
+
+<h2>Advantages and Limitations</h2>
+<ul>
+    <li><strong>Static Arrays:</strong> Quick and easy for small, fixed-size data but lack flexibility.</li>
+    <li><strong>Dynamic Arrays:</strong> Offer flexibility and adaptability, especially for large buffers, but require careful memory management.</li>
+</ul>
+
+<h3>Common Beginner Mistakes</h3>
+<ul>
+    <li><strong>Out-of-bounds access:</strong> Accessing indices outside the array size can lead to undefined behavior.</li>
+    <li><strong>Memory leaks:</strong> Not freeing dynamically allocated memory with <code>delete[]</code> leads to memory leaks.</li>
+    <li><strong>Confusing array size:</strong> Remember, <code>array.length</code> is unavailable in traditional arrays; use constant or dynamic size management.</li>
+</ul>
+
+<h2>Exercise 1: Static Array Processing</h2>
+<ol>
+    <li><strong>Objective:</strong> Write a function that fills a static array with a simple waveform (e.g., a sine wave).</li>
+    <li><strong>Details:</strong>
+        <ul>
+            <li>Create a static array of 1000 samples.</li>
+            <li>Populate it with values representing a sine wave using the formula <code>sin(2 * M_PI * frequency * t / sampleRate)</code>.</li>
+            <li>Assume a frequency of 440 Hz and a sample rate of 44100 Hz.</li>
+        </ul>
+    </li>
+</ol>
+
+<div class="example">
+<pre><code>#include &lt;cmath&gt;
+
+void fillSineWave(float audioBuffer[1000], float frequency, int sampleRate) {
+    for (int i = 0; i < 1000; ++i) {
+        audioBuffer[i] = sin(2 * M_PI * frequency * i / sampleRate);
+    }
+}</code></pre>
+</div>
+
+<h2>Exercise 2: Dynamic Array Processing</h2>
+<ol>
+    <li><strong>Objective:</strong> Create a function that dynamically allocates an audio buffer, fills it with random values, applies gain, and then deallocates the memory.</li>
+    <li><strong>Details:</strong>
+        <ul>
+            <li>The function should take <code>bufferSize</code> and <code>gain</code> as parameters.</li>
+            <li>After processing, release the allocated memory to prevent leaks.</li>
+        </ul>
+    </li>
+</ol>
+
+<div class="example">
+<pre><code>#include &lt;cstdlib&gt; // For rand()
+
+void processDynamicBuffer(int bufferSize, float gain) {
+    float* audioBuffer = new float[bufferSize];
+
+    for (int i = 0; i < bufferSize; ++i) {
+        audioBuffer[i] = (static_cast<float>(rand()) / RAND_MAX) * 2.0f - 1.0f;
+    }
+
+    for (int i = 0; i < bufferSize; ++i) {
+        audioBuffer[i] *= gain;
+    }
+
+    delete[] audioBuffer;
+}</code></pre>
+</div>
+
+<h2>Quiz Questions</h2>
+<ul>
+    <li>What is a primary difference between static and dynamic arrays in C++?</li>
+    <li>What happens if you try to access an element out of bounds in an array?</li>
+    <li>What is the purpose of <code>delete[]</code> in managing dynamic arrays?</li>
+</ul>
+
+<h2>Summary</h2>
+<ul>
+    <li><strong>Arrays</strong> are foundational in audio programming for holding and processing audio data.</li>
+    <li><strong>Static Arrays</strong> are suitable for fixed-size data, while <strong>Dynamic Arrays</strong> are essential for variable-sized buffers.</li>
+    <li><strong>Memory management</strong> is critical with dynamic arrays to avoid memory leaks.</li>
+</ul>
+
+<p>With a solid understanding of arrays, you are ready to explore memory management and see how stack and heap allocation impact audio processing in the next chapter.</p>
+
+</body>
+</html>
